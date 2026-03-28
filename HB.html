@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Joyeux Anniversaire 🎂</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #ffed9c, #fad3f6);
+            text-align: center;
+            padding: 50px;
+        }
+        h1 {
+            font-size: 3em;
+            color: #f6b0ff;
+            animation: bounce 1.5s infinite;
+        }
+        p {
+            font-size: 1.5em;
+            color: #444;
+        }
+        img {
+            width: 400px;
+            margin-top: 20px;
+            animation: bounce 3s infinite;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .btn {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 15px 25px;
+            background-color: #ff69b4;
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            font-size: 1.2em;
+            transition: background 0.3s;
+        }
+        .btn:hover {
+            background-color: #ff1493;
+        }
+        .confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+        }
+        .content {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin-top: 20px;
+        }
+        .photo {
+            flex: 1;
+            text-align: center;
+        }
+        .bougies {
+            flex: 1;
+            position: relative ;
+            display: block;
+        }
+        .bougie {
+            position: absolute;
+            width: 30px;
+            height: 400px;
+            background-color: #f4a261;
+            border-radius: 10px;
+            top: -160px;
+        }
+        .flamme {
+            position: absolute;
+            top: -55px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 55px;
+            background-color: #ffe920 ;
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            animation: flicker 2s infinite alternate;
+        }
+        .flamme.etainte {
+            background-color: #ccc;
+            animation: none;
+        }
+        @keyframes flicker {
+            0% { transform: translateX(-50%) scaleY(1); }
+            100% { transform: translateX(-50%) scaleY(1.1); }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="confettiCanvas" class="confetti-canvas"></canvas>
+    <audio id="musique" src="nastelbom-happy-birthday-469282.mp3" type="audio/mpeg" preload="auto" autoplay loop>
+        Votre navigateur ne supporte pas l’élément audio.
+    </audio>
+    <h1>🎉 Joyeux Anniversaire Papa! 🎉</h1>
+    <p>Je te souhaite plein de bonnes choses et une longue vie !</p>
+    <p>Je t'aime, ta fille chérie.</p>
+    <div class="content">
+        <div class="photo">
+            <img src="C:\Users\Marie\Downloads\WhatsApp Image 2026-03-28 at 18.17.30.jpeg" alt="photo de papa">
+        </div>
+        <div class="bougies">
+            <div class="gateau"></div>
+            <div class="bougie" style="left: 35px;"><div class="flamme"></div></div>
+            <div class="bougie" style="left: 90px;"><div class="flamme"></div></div>
+            <div class="bougie" style="left: 145px;"><div class="flamme"></div></div>
+            <div class="bougie" style="left: 190px;"><div class="flamme"></div></div>
+            <div class="bougie" style="left: 245px;"><div class="flamme"></div></div>
+            <div class="bougie" style="left: 290px;"><div class="flamme"></div></div>
+        </div>
+    </div>
+    <br>
+    <a href="#" class="btn">Souffler les bougies 🎂</a>
+
+    <script>
+        const canvas = document.getElementById('confettiCanvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        function random(min, max) {
+            return Math.random() * (max - min) + min;
+        }
+
+        function createConfetti() {
+            const colors = ['#ff1a75','#ffdd57','#00d1b2','#0099ff','#ff5c33'];
+            for (let i = 0; i < 200; i++) {
+                particles.push({
+                    x: random(0, canvas.width),
+                    y: random(-canvas.height, 0),
+                    r: random(4, 9),
+                    d: random(10, 30),
+                    color: colors[Math.floor(random(0, colors.length))],
+                    tilt: random(-10, 10),
+                    tiltAngleIncrement: random(0.07, 0.12),
+                    tiltAngle: 0
+                });
+            }
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach((p, index) => {
+                ctx.beginPath();
+                ctx.lineWidth = p.r;
+                ctx.strokeStyle = p.color;
+                ctx.moveTo(p.x + p.tilt + p.r / 2, p.y);
+                ctx.lineTo(p.x + p.tilt, p.y + p.tilt + p.r / 2);
+                ctx.stroke();
+
+                p.tiltAngle += p.tiltAngleIncrement;
+                p.y += (Math.cos(p.d) + 3 + p.r / 2) / 2;
+                p.tilt = Math.sin(p.tiltAngle) * 15;
+
+                if (p.y > canvas.height) {
+                    particles[index] = {
+                        x: random(0, canvas.width),
+                        y: random(-20, 0),
+                        r: p.r,
+                        d: p.d,
+                        color: p.color,
+                        tilt: random(-10, 10),
+                        tiltAngleIncrement: p.tiltAngleIncrement,
+                        tiltAngle: p.tiltAngle
+                    };
+                }
+            });
+            requestAnimationFrame(draw);
+        }
+
+        window.addEventListener('load', () => {
+            createConfetti();
+            draw();
+            const musique = document.getElementById('musique');
+            const playPromise = musique.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(() => {
+                    // autoplay peut être bloqué, on attend un clic
+                    document.body.addEventListener('click', () => {
+                        musique.play();
+                    }, { once: true });
+                });
+            }
+        });
+
+        document.querySelector('.btn').addEventListener('click', (e) => {
+            e.preventDefault();
+            document.querySelectorAll('.flamme').forEach(flamme => {
+                flamme.classList.add('etainte');
+            });
+        });
+    </script>
+</body>
+</html>
